@@ -44,9 +44,7 @@ if 'authenticated":true' in req_login.text:
         exit()
 
 else:
-    print("Error Login")
-    print('')
-
-
-
-
+    
+    print(f'[-] {req.json()["message"]}')
+    input()
+    exit()
