@@ -45,6 +45,6 @@ if 'authenticated":true' in req_login.text:
 
 else:
     
-    print(f'[-] {req.json()["message"]}')
+    print(f'[-] {req_login.json()["message"]}')
     input()
     exit()
