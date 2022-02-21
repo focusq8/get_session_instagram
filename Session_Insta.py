@@ -1,12 +1,14 @@
 from  requests import get , post
 import json
 from uuid import uuid4
-
+from os import system
 
 def login_one_session():
   
-  global login_req
+  global login_req , username , password
 
+  system('cls||clear')
+  print(f"[+] get session one account [+]\n\n\n")
   username = input("Enter Your Username: ")
   password = input("Enter Your password: ")
   login_url = 'https://www.instagram.com/accounts/login/ajax/'
@@ -45,15 +47,62 @@ def login_one_session():
 
   elif '"authenticated":true' in login_req.text:
       sessionid = login_req.cookies.get("sessionid")
-      with open(f'{username}.txt', 'w') as file:
+      with open(f'{username}.txt', 'a') as file:
           file.write(f'{sessionid}')
           file.close()
-          print(f"[$] Saved as {username}.txt")
-          input()
-          exit()
+      login_one_session2()
   else:
       print(login_req.text)
+      login_one_session()
 
+def login_one_session2():
+  
+  global login_req
+
+  login_url = 'https://www.instagram.com/accounts/login/ajax/'
+
+  login_header = {
+      'accept': '*/*',
+      'accept-encoding': 'gzip, deflate, br',
+      'accept-language': 'en-US,en;q=0.9,ar;q=0.8',
+      'content-length': '291',
+      'content-type': 'application/x-www-form-urlencoded',
+      'cookie': 'ig_nrcb=1; mid=YfyRDwALAAE2u2Xao59RvgY4Kie1; ig_did=24EAD7A2-41F3-458B-81B2-4C4E87CE77AE; csrftoken=Gqpabe6S9nfg1355Y2zelxzotxiiUAD7',
+      'origin': 'https://www.instagram.com',
+      'referer': 'https://www.instagram.com/',
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'same-origin',
+      'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36 Edg/98.0.1108.43",
+      'x-csrftoken': 'Gqpabe6S9nfg1355Y2zelxzotxiiUAD7',
+      'x-ig-app-id': '936619743392459',
+      'x-ig-www-claim': '0',
+      'x-instagram-ajax': '9a16d12cf843',
+      'x-requested-with': 'XMLHttpRequest'
+    }
+  login_data = {
+        'username': username,
+      'enc_password': f'#PWD_INSTAGRAM_BROWSER:0:&:{password}',
+      'queryParams': '{}',
+      'optIntoOneTap': 'false'
+      }
+
+  login_req = post(url=login_url, headers=login_header, data=login_data)
+
+  if '"checkpoint_required"' in login_req.text:
+    print(f"@{username} Is Secured \n\n")
+    send_code_one_session()
+
+  elif '"authenticated":true' in login_req.text:
+      sessionid = login_req.cookies.get("sessionid")
+      with open(f'{username}.txt', 'a') as file:
+          file.write(f'\n{sessionid}')
+          file.close()
+          print(f"[$] Saved as {username}.txt")
+
+  else:
+      print(login_req.text)
+      login_one_session()
 
 def send_code_one_session():	
 
@@ -166,7 +215,10 @@ def get_code_one_session():
 
 
 def login_list_sessions():
+
     global req_login, headers_login , username
+    system('cls||clear')
+    print(f"[+] get list sessions accounts [+]\n\n\n")
 
     file = input("[+] Enter Your File Name: ")
     if '.txt' in file:
@@ -290,17 +342,19 @@ def get_code_list_sessions():
 
 
 if __name__ == "__main__":
-
-    choose = input("""
+    def begin():
+        choose = input("""
     
-[ 1 ] get session account
+[ 1 ] get session one account
 [ 2 ] get list sessions accounts
 
 please choose your number: """)
 
-
-    if choose == "1":
-        login_one_session()
-    elif choose == "2":
-        login_list_sessions()
-
+        if choose == "1":
+            login_one_session()
+        elif choose == "2":
+            login_list_sessions()
+        else:
+            system('cls||clear')
+            begin()
+    begin()
